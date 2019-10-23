@@ -18,7 +18,16 @@ type Node struct {
 	KeyPressFunc func(n *Node, k string)
 }
 
-func setColor(n *Node, tn *tview.TreeNode) {
+func buildTree(title string, rootName string) *tview.TreeView {
+	rootNode := &Node{Label: rootName, ExpandFunc: listArtists}
+	treeRoot := tview.NewTreeNode(rootNode.Label).SetReference(rootNode).SetColor(tcell.ColorGreenYellow).SetSelectable(false)
+	tree := tview.NewTreeView().SetRoot(treeRoot).SetCurrentNode(treeRoot)
+	tree.SetBorder(true).SetTitle(title)
+	tree.SetInputCapture(treeKeyBindings(tree))
+	return tree
+}
+
+func setNodeColor(n *Node, tn *tview.TreeNode) {
 	if n.Meta != nil {
 		if color, ok := n.Meta["color"]; ok {
 			tn.SetColor(color.(tcell.Color))
@@ -34,7 +43,7 @@ func treeKeyBindings(tree *tview.TreeView) func(key *tcell.EventKey) *tcell.Even
 			if selected.KeyPressFunc != nil {
 				// execute key press on selected node if a func is provided
 				selected.KeyPressFunc(selected, k)
-				setColor(selected, tree.GetCurrentNode())
+				setNodeColor(selected, tree.GetCurrentNode())
 			} else if selected.Level == 1 {
 				// search top-level nodes
 				k := strings.ToUpper(k)
@@ -77,7 +86,7 @@ func treeKeyBindings(tree *tview.TreeView) func(key *tcell.EventKey) *tcell.Even
 			}
 			for _, child := range children {
 				childNode := tview.NewTreeNode(child.Label).SetReference(child).SetSelectable(true)
-				setColor(child, childNode)
+				setNodeColor(child, childNode)
 				selected.AddChild(childNode)
 			}
 			selected.SetExpanded(true)

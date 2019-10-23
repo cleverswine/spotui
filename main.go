@@ -54,8 +54,8 @@ func main() {
 	flex := tview.NewFlex().
 		AddItem(tview.NewFlex().SetDirection(tview.FlexRow).
 			AddItem(tview.NewFlex().SetDirection(tview.FlexColumn).
-				AddItem(artistTree, 0, 10, true).
-				AddItem(playlistTree, 0, 4, false), 0, 3, true).
+				AddItem(artistTree, 0, 1, true).
+				AddItem(playlistTree, 0, 1, false), 0, 3, true).
 			AddItem(bottom, 0, 1, true), 0, 1, false)
 
 	// run
