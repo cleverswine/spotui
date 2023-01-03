@@ -19,9 +19,11 @@ func (a byArtistName) Less(i, j int) bool {
 // byAlbumYear assists in sorting albums by year
 type byAlbumYear []spotify.SimpleAlbum
 
-func (a byAlbumYear) Len() int           { return len(a) }
-func (a byAlbumYear) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
-func (a byAlbumYear) Less(i, j int) bool { return a[i].ReleaseDateTime().Before(a[j].ReleaseDateTime()) }
+func (a byAlbumYear) Len() int      { return len(a) }
+func (a byAlbumYear) Swap(i, j int) { a[i], a[j] = a[j], a[i] }
+func (a byAlbumYear) Less(i, j int) bool {
+	return a[i].ReleaseDateTime().Before(a[j].ReleaseDateTime())
+}
 
 // byPlaylistTrack assists in sorting tracks by artist / name
 type byPlaylistTrack []spotify.PlaylistTrack
@@ -142,7 +144,7 @@ func (c *Client) getAllSongsByAlbum(id string) ([]spotify.SimpleTrack, error) {
 	limit := 50
 	for {
 		offset := (page - 1) * limit
-		items, err := c.spotifyClient.GetAlbumTracksOpt(spotify.ID(id), limit, offset)
+		items, err := c.spotifyClient.GetAlbumTracksOpt(spotify.ID(id), &spotify.Options{Limit: &limit, Offset: &offset})
 		if err != nil {
 			return nil, err
 		}
@@ -163,7 +165,7 @@ func (c *Client) getAllAlbumsByArtist(id string) ([]spotify.SimpleAlbum, error) 
 	//country := spotify.CountryUSA
 	for {
 		offset := (page - 1) * limit
-		items, err := c.spotifyClient.GetArtistAlbumsOpt(spotify.ID(id), &spotify.Options{Limit: &limit, Offset: &offset}, &albumTypes)
+		items, err := c.spotifyClient.GetArtistAlbumsOpt(spotify.ID(id), &spotify.Options{Limit: &limit, Offset: &offset}, albumTypes)
 		if err != nil {
 			return nil, err
 		}
